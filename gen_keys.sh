@@ -1,5 +1,4 @@
 #!/bin/bash
 
-openssl genrsa -out rsa_private.pem 2048
-openssl rsa -in rsa_private.pem -pubout -out rsa_public.pem
-openssl rsa -in rsa_private.pem -outform DER -put rsa_private.der
+openssl req -x509 -newkey rsa:2048 -keyout rsa_private.pem -nodes -out rsa_cert.pem -subj "/CN=unused"
+openssl rsa -in rsa_private.pem -outform DER -out rsa_private.der

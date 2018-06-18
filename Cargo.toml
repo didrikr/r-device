@@ -4,3 +4,7 @@ version = "0.1.0"
 authors = ["Didrik Rokhaug <didrik.rokhaug@gmail.com>"]
 
 [dependencies]
+rumqtt = "*"
+jsonwebtoken = "4"
+serde_derive = "1"
+serde = "1"

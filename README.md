@@ -14,7 +14,7 @@ Prerequisites:
 
 How to run:
 ===========
-1. Run `generate_keys.sh`.
+1. Run `gen_keys.sh`.
 2. Create a Google Cloud project.
 3. Lots of configuring of Google Cloud. See next section.
 4. Change static variables in `src/main.rs`.

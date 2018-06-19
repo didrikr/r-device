@@ -7,6 +7,7 @@ extern crate serde_derive;
 
 use std::time;
 use std::ops::Add;
+use std::thread;
 
 static BROKER: &str = "mqtt.googleapis.com:8883";
 
@@ -59,7 +60,14 @@ fn main() {
 
     println!("Starting client");
     
-    let mqtt_client = MqttClient::start(client_options, None).expect("FAILED TO START CLIENT");
+    let mut mqtt_client = MqttClient::start(client_options, None).expect("FAILED TO START CLIENT");
 
     println!("MQTT client started");
+
+    for i in (0..) {
+        mqtt_client.publish("/devices/mylaptop/events", QoS::Level1, i.to_string().into_bytes()).expect("UNABLE TO PUBLISH");
+        println!("published {}", i);
+
+        thread::sleep(time::Duration::from_secs(3));
+    }
 }

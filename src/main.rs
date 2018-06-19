@@ -14,7 +14,7 @@ static PROJECT_ID: &str = "didrik-test";
 static LOCATION: &str = "us-central1";
 static REGISTRY_ID: &str = "myregistry";
 static DEVICE_ID: &str = "mylaptop";
-static SUBTOPIC: &str = "events";
+static SUBTOPIC: &str = "events"; // I'm not sure what the legal values are here, change at your own risk
 
 
 static BROKER: &str = "mqtt.googleapis.com:8883";

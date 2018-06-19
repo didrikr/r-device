@@ -5,10 +5,12 @@ A sample device in rust for sending data to Google Cloud IoT Core over MQTT.
 
 Prerequisites:
 -------------
-- openssl
+On ubuntu:
+- openssl (libssl-dev)
 - wget
 - [rust compiler](https://www.rust-lang.org)
-- linux/bash (for the key generation script)
+- pkg-config
+- git
 
 - Google Cloud SDK (for the gcloud commands, can be done online)
 
@@ -28,7 +30,7 @@ Most of these steps can also be done online, using the GUI or the cloud console.
 Replace words in CAPITAL letters with something apropreate of your choice.
 1. `gcloud projects create PROJECT_ID --enable-cloud-apis` (you can add `--set-as-default`)
 2. `gcloud pubsub topics create TOPIC_ID`
-3. `gcloud pubsub subscriptions create prijects/PROJECT_ID/subscriptions/SUBSCRIPTION_ID --topic=TOPIC_ID`
+3. `gcloud pubsub subscriptions create projects/PROJECT_ID/subscriptions/SUBSCRIPTION_ID --topic=TOPIC_ID`
 4. Grant permission to the Cloud IoT Core service account. (This can be done by downloading https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git, navigating to the iot subfolder and run `npm --prefix ./scripts install` and `node scripts/iam.js TOPIC_ID`). TODO: Find out what actually happens here, and give better explanaiton.
 5. `gcloud iot registries create my-registry --project=PROJECT_ID --region=REGION --event-notification-config=topic[projects/PROJECT_ID/topics/TOPIC_ID`
 6. `gcloud iot devices create DEVICE_ID --project=PROJECT_ID --region=REGION --registry=REGISTRY_ID --public-key path=rsa_cert.pem,type=rs256`

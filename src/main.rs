@@ -53,7 +53,8 @@ fn main() {
     let client_options = MqttOptions::new()
                                       .set_keep_alive(60)
                                       .set_client_id("projects/didrik-test/locations/us-central1/registries/myregistry/devices/mylaptop")
-                                      .set_password(token.as_str()) //TODO: add jwt
+                                      .set_password(token.as_str())
+                                      .set_ca("roots.pem")
                                       .set_broker(BROKER);
 
     println!("Starting client");

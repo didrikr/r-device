@@ -30,6 +30,7 @@ struct Claims {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Data {
+    timestamp: u64,
     data: i32,
 }
 
@@ -79,10 +80,14 @@ fn main() {
     println!("MQTT client started");
 
     for i in 0.. {
-        let data = Data{data: i};
+        let data = Data {
+            timestamp: now.duration_since(time::UNIX_EPOCH).unwrap().as_secs(),
+            data: i,
+        };
+
         let json_data = serde_json::to_string(&data).expect("UNABLE TO SERIALZE DATA");
         mqtt_client.publish(format!("/devices/{}/{}", DEVICE_ID, SUBTOPIC).as_str(), QoS::Level1, json_data.into_bytes()).expect("UNABLE TO PUBLISH");
-        println!("published {}", i);
+        println!("published {:?}", data);
 
         thread::sleep(time::Duration::from_secs(3));
     }

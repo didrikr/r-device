@@ -81,7 +81,7 @@ fn main() {
 
     for i in 0.. {
         let data = Data {
-            timestamp: now.duration_since(time::UNIX_EPOCH).unwrap().as_secs(),
+            timestamp: time::SystemTime::now().duration_since(time::UNIX_EPOCH).unwrap().as_secs(),
             data: i,
         };
 

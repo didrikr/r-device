@@ -5,6 +5,8 @@ extern crate jsonwebtoken as jwt;
 #[macro_use]
 extern crate serde_derive;
 
+extern crate serde_json;
+
 use std::time;
 use std::ops::Add;
 use std::thread;
@@ -14,7 +16,7 @@ static PROJECT_ID: &str = "didrik-test";
 static LOCATION: &str = "us-central1";
 static REGISTRY_ID: &str = "myregistry";
 static DEVICE_ID: &str = "mylaptop";
-static SUBTOPIC: &str = "events"; // I'm not sure what the legal values are here, change at your own risk
+static SUBTOPIC: &str = "events"; // Do not change, unless you know what you are doing
 
 
 static BROKER: &str = "mqtt.googleapis.com:8883";
@@ -24,6 +26,11 @@ struct Claims {
     iat: String,
     exp: String,
     aud: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Data {
+    data: i32,
 }
 
 
@@ -72,7 +79,9 @@ fn main() {
     println!("MQTT client started");
 
     for i in 0.. {
-        mqtt_client.publish(format!("/devices/{}/{}", DEVICE_ID, SUBTOPIC).as_str(), QoS::Level1, i.to_string().into_bytes()).expect("UNABLE TO PUBLISH");
+        let data = Data{data: i};
+        let json_data = serde_json::to_string(&data).expect("UNABLE TO SERIALZE DATA");
+        mqtt_client.publish(format!("/devices/{}/{}", DEVICE_ID, SUBTOPIC).as_str(), QoS::Level1, json_data.into_bytes()).expect("UNABLE TO PUBLISH");
         println!("published {}", i);
 
         thread::sleep(time::Duration::from_secs(3));

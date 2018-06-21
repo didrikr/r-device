@@ -1,3 +1,7 @@
 
 /target
 **/*.rs.bk
+roots.pem
+rsa_cert.pem
+rsa_private.pem
+rsa_private.der

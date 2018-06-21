@@ -1,7 +1,10 @@
 
 /target
 **/*.rs.bk
+
 roots.pem
 rsa_cert.pem
 rsa_private.pem
 rsa_private.der
+ec_private.pem
+ec_public.pem

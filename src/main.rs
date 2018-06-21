@@ -15,7 +15,7 @@ use std::thread;
 static PROJECT_ID: &str = "didrik-test";
 static LOCATION: &str = "us-central1";
 static REGISTRY_ID: &str = "myregistry";
-static DEVICE_ID: &str = "mylaptop";
+static DEVICE_ID: &str = "mylaptop-rs";
 static SUBTOPIC: &str = "events"; // Do not change, unless you know what you are doing
 
 

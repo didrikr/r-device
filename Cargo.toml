@@ -5,7 +5,8 @@ authors = ["Didrik Rokhaug <didrik.rokhaug@gmail.com>"]
 
 [dependencies]
 rumqtt = "*"
-jsonwebtoken = "4"
+#jsonwebtoken = "4"
+frank_jwt = "*"
 serde_derive = "1"
 serde = "1"
 serde_json = "1"

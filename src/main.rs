@@ -1,15 +1,17 @@
 extern crate rumqtt;
 use rumqtt::*;
 
-extern crate jsonwebtoken as jwt;
+//extern crate jsonwebtoken as jwt;
+extern crate frank_jwt as fjwt;
 #[macro_use]
 extern crate serde_derive;
-
+#[macro_use]
 extern crate serde_json;
 
 use std::time;
 use std::ops::Add;
 use std::thread;
+use std::io::prelude::*;
 
 // TODO: CHANGE THESE VARIABLES
 static PROJECT_ID: &str = "didrik-test";
@@ -46,22 +48,28 @@ fn main() {
         aud: PROJECT_ID.to_owned(),
     };
 
-    let mut header = jwt::Header::new(jwt::Algorithm::RS256);
-    header.typ = Some("jwt".to_owned());
+    //let mut header = jwt::Header::new(jwt::Algorithm::RS256);
+    //header.typ = Some("jwt".to_owned());
+
+    let header = json!({
+        "typ": "jwt",
+        "alg": fjwt::Algorithm::ES256.to_string()
+    });
+
+    let claims = json!({
+        "iat": now.duration_since(time::UNIX_EPOCH).unwrap().as_secs().to_string(),
+        "exp": now.add(time::Duration::from_secs(12*60*60)).duration_since(time::UNIX_EPOCH).unwrap().as_secs().to_string(),
+        "aud": PROJECT_ID.to_owned()
+    });
 
 
 
     println!("header: {:?}", claims);
-    /*
-    let mut file = File::open("rsa_private.der").unwrap();
+
     let mut key = String::new();
-    file.read_to_string(&mut key).unwrap();
-
-    //let key = "secret";
-
+    std::fs::File::open("ec_private.pem").expect("UNABLE TO OPEN KEY").read_to_string(&mut key).unwrap();
     println!("key: {}", key);
-    */
-    let token = jwt::encode(&header, &claims, include_bytes!("../rsa_private.der")).unwrap();
+    let token = fjwt::encode(header, &key, &claims, fjwt::Algorithm::ES256).unwrap();
 
     println!("token: {:?}", token);
 
@@ -70,6 +78,7 @@ fn main() {
                                       .set_keep_alive(60)
                                       .set_client_id(format!("projects/{}/locations/{}/registries/{}/devices/{}", PROJECT_ID, LOCATION, REGISTRY_ID, DEVICE_ID))
                                       .set_password(token.as_str())
+                                      //.set_password("eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkaWRyaWstdGVzdCIsImV4cCI6IjE1Mjk2MzU1ODEiLCJpYXQiOiIxNTI5NTkyMzgxIn0.bsJ_iLueShMAosnkdEEkdzDaQKaUldKjkBpUr971EMmGM0SCQrvB0kXYrRfLJpBGHcm88LMpT1hCh-OPFVAXYg")
                                       .set_ca("roots.pem")
                                       .set_broker(BROKER);
 

@@ -24,13 +24,6 @@ static SUBTOPIC: &str = "events"; // Do not change, unless you know what you are
 static BROKER: &str = "mqtt.googleapis.com:8883";
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Claims {
-    iat: String,
-    exp: String,
-    aud: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 struct Data {
     timestamp: u64,
     data: i32,
@@ -40,31 +33,19 @@ struct Data {
 fn main() {
     println!("Hello, world!");
 
-    let now = time::SystemTime::now();
-
-    let claims = Claims {
-        iat: now.duration_since(time::UNIX_EPOCH).unwrap().as_secs().to_string(), 
-        exp: now.add(time::Duration::from_secs(12*60*60)).duration_since(time::UNIX_EPOCH).unwrap().as_secs().to_string(), 
-        aud: PROJECT_ID.to_owned(),
-    };
-
-    //let mut header = jwt::Header::new(jwt::Algorithm::RS256);
-    //header.typ = Some("jwt".to_owned());
-
     let header = json!({
         "typ": "jwt",
         "alg": fjwt::Algorithm::ES256.to_string()
     });
 
+    let now = time::SystemTime::now();
     let claims = json!({
         "iat": now.duration_since(time::UNIX_EPOCH).unwrap().as_secs().to_string(),
         "exp": now.add(time::Duration::from_secs(12*60*60)).duration_since(time::UNIX_EPOCH).unwrap().as_secs().to_string(),
         "aud": PROJECT_ID.to_owned()
     });
 
-
-
-    println!("header: {:?}", claims);
+    println!("claims: {:?}", claims);
 
     let mut key = String::new();
     std::fs::File::open("ec_private.pem").expect("UNABLE TO OPEN KEY").read_to_string(&mut key).unwrap();
@@ -72,6 +53,14 @@ fn main() {
     let token = fjwt::encode(header, &key, &claims, fjwt::Algorithm::ES256).unwrap();
 
     println!("token: {:?}", token);
+
+    // TEST TO SEE IF THE TOKEN IS CORRECT
+    let mut pub_key = String::new();
+    std::fs::File::open("ec_public.pem").unwrap().read_to_string(&mut pub_key).unwrap();
+    let (header, payload) = fjwt::decode(&token, &pub_key, fjwt::Algorithm::ES256).expect("UNABLE TO DECODE JWT");
+
+    println!("decoded header: {}", header);
+    println!("decoded payload: {}", payload);
 
 
     let client_options = MqttOptions::new()
@@ -96,6 +85,7 @@ fn main() {
 
         let json_data = serde_json::to_string(&data).expect("UNABLE TO SERIALZE DATA");
         mqtt_client.publish(format!("/devices/{}/{}", DEVICE_ID, SUBTOPIC).as_str(), QoS::Level1, json_data.into_bytes()).expect("UNABLE TO PUBLISH");
+
         println!("published {:?}", data);
 
         thread::sleep(time::Duration::from_secs(3));

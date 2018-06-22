@@ -67,7 +67,7 @@ fn main() {
                                       .set_keep_alive(60)
                                       .set_client_id(format!("projects/{}/locations/{}/registries/{}/devices/{}", PROJECT_ID, LOCATION, REGISTRY_ID, DEVICE_ID))
                                       .set_password(token.as_str())
-                                      //.set_password("eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkaWRyaWstdGVzdCIsImV4cCI6IjE1Mjk2MzU1ODEiLCJpYXQiOiIxNTI5NTkyMzgxIn0.bsJ_iLueShMAosnkdEEkdzDaQKaUldKjkBpUr971EMmGM0SCQrvB0kXYrRfLJpBGHcm88LMpT1hCh-OPFVAXYg")
+                                      //.set_password("eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkaWRyaWstdGVzdCIsImV4cCI6IjE1Mjk2OTQ5OTUiLCJpYXQiOiIxNTI5NjUxNzk1In0.bBMlM8YWc5E5mhD1h9wMofdkdNqbSPQNMCt2dkuPG1ehRl-aC9hojKzNDR-ZAgGdifhk_ivuIil9le5tQoGFmQ")
                                       .set_ca("roots.pem")
                                       .set_broker(BROKER);
 

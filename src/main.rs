@@ -17,7 +17,7 @@ use std::io::prelude::*;
 static PROJECT_ID: &str = "didrik-test";
 static LOCATION: &str = "us-central1";
 static REGISTRY_ID: &str = "myregistry";
-static DEVICE_ID: &str = "mylaptop";
+static DEVICE_ID: &str = "mylaptop-es";
 static SUBTOPIC: &str = "events"; // Do not change, unless you know what you are doing
 
 

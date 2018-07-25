@@ -15,8 +15,8 @@ use std::thread;
 static PROJECT_ID: &str = "didrik-test";
 static LOCATION: &str = "us-central1";
 static REGISTRY_ID: &str = "myregistry";
-static DEVICE_ID: &str = "mylaptop-rs";
-static SUBTOPIC: &str = "events"; // Do not change, unless you know what you are doing
+static DEVICE_ID: &str = "key-test";
+static SUBTOPIC: &str = ""; // This don't have to be edited
 
 
 static BROKER: &str = "mqtt.googleapis.com:8883";
@@ -86,7 +86,7 @@ fn main() {
         };
 
         let json_data = serde_json::to_string(&data).expect("UNABLE TO SERIALZE DATA");
-        mqtt_client.publish(format!("/devices/{}/{}", DEVICE_ID, SUBTOPIC).as_str(), QoS::Level1, json_data.into_bytes()).expect("UNABLE TO PUBLISH");
+        mqtt_client.publish(format!("/devices/{}/events/{}", DEVICE_ID, SUBTOPIC).as_str(), QoS::Level1, json_data.into_bytes()).expect("UNABLE TO PUBLISH");
         println!("published {:?}", data);
 
         thread::sleep(time::Duration::from_secs(3));

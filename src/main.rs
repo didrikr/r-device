@@ -10,16 +10,18 @@ extern crate serde_json;
 use std::time;
 use std::ops::Add;
 use std::thread;
+use std::sync::Arc;
 
 // TODO: CHANGE THESE VARIABLES
 static PROJECT_ID: &str = "didrik-test";
 static LOCATION: &str = "us-central1";
 static REGISTRY_ID: &str = "myregistry";
 static DEVICE_ID: &str = "key-test";
-static SUBTOPIC: &str = ""; // This don't have to be edited
+static SUBTOPIC: &str = ""; // This don't have to be edited, but if edited it must start with a /. E.g. "/alarms/garage"
 
 
 static BROKER: &str = "mqtt.googleapis.com:8883";
+//static BROKER: &str = "test.mosquitto.org:1883";
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
@@ -34,6 +36,11 @@ struct Data {
     data: i32,
 }
 
+fn register_address(message: Message) {
+    println!("Topic: {}", message.topic.to_string());
+    println!("Payload: {}", String::from_utf8(Arc::try_unwrap(message.payload).unwrap()).unwrap());
+    //panic!("Received:\n Topic: {}\n Payload: {}", message.topic.to_string(), String::from_utf8(Arc::try_unwrap(message.payload).unwrap()).unwrap())
+}
 
 fn main() {
     println!("Hello, world!");
@@ -73,11 +80,18 @@ fn main() {
                                       .set_ca("roots.pem")
                                       .set_broker(BROKER);
 
+    let mqtt_callbacks = Some(MqttCallback::new()
+                                            .on_message(register_address));
+
+
     println!("Starting client");
     
-    let mut mqtt_client = MqttClient::start(client_options, None).expect("FAILED TO START CLIENT");
+    let mut mqtt_client = MqttClient::start(client_options, mqtt_callbacks).expect("FAILED TO START CLIENT");
 
     println!("MQTT client started");
+
+    println!("Subscribing to /devices/{}/config", DEVICE_ID);
+    mqtt_client.subscribe(vec![(format!("/devices/{}/config", DEVICE_ID).as_str(), QoS::Level1)]).expect("UNABLE TO SUBSCRIBE");
 
     for i in 0.. {
         let data = Data {
@@ -86,7 +100,7 @@ fn main() {
         };
 
         let json_data = serde_json::to_string(&data).expect("UNABLE TO SERIALZE DATA");
-        mqtt_client.publish(format!("/devices/{}/events/{}", DEVICE_ID, SUBTOPIC).as_str(), QoS::Level1, json_data.into_bytes()).expect("UNABLE TO PUBLISH");
+        mqtt_client.publish(format!("/devices/{}/events{}", DEVICE_ID, SUBTOPIC).as_str(), QoS::Level1, json_data.into_bytes()).expect("UNABLE TO PUBLISH");
         println!("published {:?}", data);
 
         thread::sleep(time::Duration::from_secs(3));

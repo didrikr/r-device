@@ -32,5 +32,5 @@ Replace words in CAPITAL letters with something apropreate of your choice.
 1. `gcloud projects create PROJECT_ID --enable-cloud-apis` (you can add `--set-as-default`)
 2. `gcloud pubsub topics create TOPIC_ID`
 3. `gcloud pubsub subscriptions create projects/PROJECT_ID/subscriptions/SUBSCRIPTION_ID --topic=TOPIC_ID`
-4. Grant permission to the Cloud IoT Core service account. (This can be done by downloading https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git, navigating to the iot subfolder and run `npm --prefix ./scripts install` and `node scripts/iam.js TOPIC_ID`). TODO: Find out what actually happens here, and give better explanaiton.
+4. Grant permission to the Cloud IoT Core service account. (This can be done by downloading https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git, navigating to the iot subfolder and run `npm --prefix ./scripts install` and `node scripts/iam.js TOPIC_ID`). TODO: Find out what actually happens here, and give better explanaiton. This might do the trick: `gcloud projects add-iam-policy-binding PROJECT_ID --member=serviceAccount:cloud-iot@system.gserviceaccount.com --role=roles/pubsub.publisher`
 5. `gcloud iot registries create my-registry --project=PROJECT_ID --region=REGION --event-notification-config=topic=projects/PROJECT_ID/topics/TOPIC_ID`

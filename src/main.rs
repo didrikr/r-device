@@ -61,7 +61,7 @@ fn main() {
 
     println!("key: {}", key);
     */
-    let token = jwt::encode(&header, &claims, include_bytes!("../rsa_private.der")).unwrap();
+    let token = jwt::encode(&header, &claims, include_bytes!("../../rsa_private.der")).unwrap();
 
     println!("token: {:?}", token);
 
@@ -79,7 +79,8 @@ fn main() {
 
     println!("MQTT client started");
 
-    for i in 0.. {
+    let mut i = 0;
+    loop {
         let data = Data {
             timestamp: time::SystemTime::now().duration_since(time::UNIX_EPOCH).unwrap().as_secs(),
             data: i,
@@ -90,5 +91,6 @@ fn main() {
         println!("published {:?}", data);
 
         thread::sleep(time::Duration::from_secs(3));
+        i = (i + 1) % 128;
     }
 }

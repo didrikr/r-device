@@ -16,7 +16,7 @@ use std::sync::Arc;
 static PROJECT_ID: &str = "didrik-test";
 static LOCATION: &str = "us-central1";
 static REGISTRY_ID: &str = "myregistry";
-static DEVICE_ID: &str = "key-test";
+static DEVICE_ID: &str = "mylaptop-rs";
 static SUBTOPIC: &str = ""; // This don't have to be edited, but if edited it must start with a /. E.g. "/alarms/garage"
 
 
@@ -25,8 +25,8 @@ static BROKER: &str = "mqtt.googleapis.com:8883";
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
-    iat: String,
-    exp: String,
+    iat: u64,
+    exp: u64,
     aud: String,
 }
 
@@ -48,8 +48,8 @@ fn main() {
     let now = time::SystemTime::now();
 
     let claims = Claims {
-        iat: now.duration_since(time::UNIX_EPOCH).unwrap().as_secs().to_string(), 
-        exp: now.add(time::Duration::from_secs(12*60*60)).duration_since(time::UNIX_EPOCH).unwrap().as_secs().to_string(), 
+        iat: now.duration_since(time::UNIX_EPOCH).unwrap().as_secs(), 
+        exp: now.add(time::Duration::from_secs(12*60*60)).duration_since(time::UNIX_EPOCH).unwrap().as_secs(), 
         aud: PROJECT_ID.to_owned(),
     };
 
@@ -68,7 +68,7 @@ fn main() {
 
     println!("key: {}", key);
     */
-    let token = jwt::encode(&header, &claims, include_bytes!("../../rsa_private.der")).unwrap();
+    let token = jwt::encode(&header, &claims, include_bytes!("../rsa_private.der")).unwrap();
 
     println!("token: {:?}", token);
 

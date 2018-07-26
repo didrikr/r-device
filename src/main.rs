@@ -15,7 +15,7 @@ use std::sync::Arc;
 // TODO: CHANGE THESE VARIABLES
 static PROJECT_ID: &str = "didrik-test";
 static LOCATION: &str = "us-central1";
-static REGISTRY_ID: &str = "myregistry";
+static REGISTRY_ID: &str = "weather-station-registry";
 static DEVICE_ID: &str = "mylaptop-rs";
 static SUBTOPIC: &str = ""; // This don't have to be edited, but if edited it must start with a /. E.g. "/alarms/garage"
 
@@ -32,8 +32,10 @@ struct Claims {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Data {
-    timestamp: u64,
-    data: i32,
+    total_ram: u32,
+    free_ram: u32,
+    temp: i32,
+    hum: u32,
 }
 
 fn register_address(message: Message) {
@@ -94,11 +96,13 @@ fn main() {
     println!("Subscribing to /devices/{}/config", DEVICE_ID);
     mqtt_client.subscribe(vec![(format!("/devices/{}/config", DEVICE_ID).as_str(), QoS::Level1)]).expect("UNABLE TO SUBSCRIBE");
 
-    let mut i = 0;
+    let mut i: u32 = 0;
     loop {
         let data = Data {
-            timestamp: time::SystemTime::now().duration_since(time::UNIX_EPOCH).unwrap().as_secs(),
-            data: i,
+            total_ram: 2048,
+            free_ram: 1024,
+            temp: i as i32,
+            hum: 127-i,
         };
 
         let json_data = serde_json::to_string(&data).expect("UNABLE TO SERIALZE DATA");

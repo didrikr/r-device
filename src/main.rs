@@ -51,25 +51,14 @@ fn main() {
 
     let claims = Claims {
         iat: now.duration_since(time::UNIX_EPOCH).unwrap().as_secs(), 
-        exp: now.add(time::Duration::from_secs(12*60*60)).duration_since(time::UNIX_EPOCH).unwrap().as_secs(), 
+        exp: now.add(time::Duration::from_secs(24*60*60)).duration_since(time::UNIX_EPOCH).unwrap().as_secs(), 
         aud: PROJECT_ID.to_owned(),
     };
 
     let mut header = jwt::Header::new(jwt::Algorithm::RS256);
     header.typ = Some("jwt".to_owned());
-
-
-
     println!("header: {:?}", claims);
-    /*
-    let mut file = File::open("rsa_private.der").unwrap();
-    let mut key = String::new();
-    file.read_to_string(&mut key).unwrap();
 
-    //let key = "secret";
-
-    println!("key: {}", key);
-    */
     let token = jwt::encode(&header, &claims, include_bytes!("../rsa_private.der")).unwrap();
 
     println!("token: {:?}", token);
@@ -102,7 +91,7 @@ fn main() {
             total_ram: 2048,
             free_ram: 1024,
             temp: i as i32,
-            hum: 127-i,
+            hum: 100-i,
         };
 
         let json_data = serde_json::to_string(&data).expect("UNABLE TO SERIALZE DATA");
@@ -110,6 +99,6 @@ fn main() {
         println!("published {:?}", data);
 
         thread::sleep(time::Duration::from_secs(3));
-        i = (i + 1) % 128;
+        i = (i + 1) % 100;
     }
 }
